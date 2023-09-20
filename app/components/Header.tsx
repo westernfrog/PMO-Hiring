@@ -33,7 +33,7 @@ export default function Header() {
           <div className="flex lg:flex-1 items-center">
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
-              <h1 className="text-lg font-semibold lg:mb-4">PMO Hiring</h1>
+              <h1 className="text-lg font-semibold lg:mb-3">PMO Hiring</h1>
             </Link>
           </div>
           <div className="flex lg:hidden">
