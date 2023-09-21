@@ -19,6 +19,7 @@ const ERROR_MESSAGES = {
 };
 
 export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
+  const [uid, setUID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +31,7 @@ export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     if (name === "email") {
-      setEmail(value);
+      setUID(value);
     }
     if (name === "password") {
       setPassword(value);
@@ -42,12 +43,12 @@ export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!terms || !email || !password || !confirmPassword) {
+    if (!terms || !uid || !password || !confirmPassword) {
       setError(ERROR_MESSAGES.EMPTY_FIELDS);
       return;
     }
 
-    if (!email.match(/^(2[0-9])[a-z]+[0-9]{4,5}$/)) {
+    if (!uid.match(/^(2[0-9])[a-z]+[0-9]{4,5}$/)) {
       setError(ERROR_MESSAGES.INVALID_EMAIL_FORMAT);
       return;
     }
@@ -56,7 +57,7 @@ export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
       setError(ERROR_MESSAGES.PASSWORDS_DO_NOT_MATCH);
       return;
     }
-
+    setEmail(uid + "@cuchd.in");
     setLoading(true);
     setError(null);
 
@@ -104,7 +105,7 @@ export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
                     autoComplete="off"
                     className="lg:w-64 w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Your UID"
-                    value={email}
+                    value={uid}
                     onChange={handleChange}
                   />
                   <span className="flex select-none items-center pl-3 sm:text-sm">
