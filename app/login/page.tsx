@@ -1,6 +1,62 @@
-import Link from "next/link";
+"use client";
 
-export default function Login() {
+import Link from "next/link";
+import { useState } from "react";
+import { auth } from "../utils/firebase";
+import { signInWithEmailAndPassword, User } from "firebase/auth";
+import { redirect } from "next/navigation";
+
+const ERROR_MESSAGES = {
+  EMPTY_FIELDS: "Please fill in all the fields.",
+  INVALID_EMAIL_FORMAT: "Please enter a valid email format (e.g., 21bcs1603).",
+  LOGIN_FAILED: "Login failed. Please check your credentials.",
+};
+
+export default function Login({ setRegistered }: { setRegistered: any }) {
+  const [uid, setUID] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChanges = (e: any) => {
+    const { name, value } = e.target;
+    if (name === "email") {
+      setUID(value);
+    }
+    if (name === "password") {
+      setPassword(value);
+    }
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (uid === "" || password === "") {
+      setError(ERROR_MESSAGES.EMPTY_FIELDS);
+      return;
+    }
+    if (!uid.match(/^(2[0-9])[a-z]+[0-9]{4,5}$/)) {
+      setError(ERROR_MESSAGES.INVALID_EMAIL_FORMAT);
+      return;
+    }
+    setEmail(uid + "@cuchd.in");
+    setLoading(true);
+    setError(null);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser as User;
+      if (user.emailVerified) {
+        redirect("/");
+      } else {
+        setRegistered(true);
+      }
+    } catch (error) {
+      setError(ERROR_MESSAGES.LOGIN_FAILED);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto max-w-7xl h-screen flex items-center justify-center p-6">
@@ -20,14 +76,17 @@ export default function Login() {
                 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-fuchsia-300 px-3">
                   <input
                     type="text"
-                    name="username"
-                    id="username"
+                    name="email"
+                    id="email"
                     autoComplete="false"
                     className="lg:w-64 w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="21bcs1603"
+                    placeholder="Your UID"
+                    value={uid}
+                    required
+                    onChange={handleChanges}
                   />
                   <span className="flex select-none items-center pl-3 sm:text-sm">
-                    /@cuchd.in
+                    @cuchd.in
                   </span>
                 </div>
               </div>
@@ -48,6 +107,9 @@ export default function Login() {
                     autoComplete="false"
                     className="w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Your Password"
+                    value={password}
+                    required
+                    onChange={handleChanges}
                   />
                 </div>
               </div>
@@ -56,10 +118,15 @@ export default function Login() {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-fuchsia-200 px-3 py-1.5 mt-10 text-sm font-semibold leading-6 text-gray-900 shadow-sm hover:bg-fuchsia-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                onClick={handleSubmit}
+                disabled={loading}
               >
-                Log in
+                {loading ? "Logging in..." : "Log in"}
               </button>
             </div>
+            {error && (
+              <div className="text-red-400 text-sm text-center">{error}</div>
+            )}
           </form>
           <div className="flex flex-row justify-between">
             <p className="mt-10 text-center text-sm text-gray-500">
