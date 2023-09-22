@@ -12,7 +12,7 @@ const ERROR_MESSAGES = {
   LOGIN_FAILED: "Login failed. Please check your credentials.",
 };
 
-export default function Login({ setRegistered }: { setRegistered: any }) {
+export default function Login() {
   const [uid, setUID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +48,6 @@ export default function Login({ setRegistered }: { setRegistered: any }) {
       if (user.emailVerified) {
         redirect("/");
       } else {
-        setRegistered(true);
       }
     } catch (error) {
       setError(ERROR_MESSAGES.LOGIN_FAILED);

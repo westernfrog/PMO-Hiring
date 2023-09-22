@@ -12,13 +12,12 @@ import {
 
 const ERROR_MESSAGES = {
   EMPTY_FIELDS: "Please fill in all the fields.",
-  INVALID_EMAIL_FORMAT:
-    "Please enter a valid email format (e.g., example@cuchd.in).",
+  INVALID_EMAIL_FORMAT: "Please enter a valid email format (e.g., 21bcs1603).",
   PASSWORDS_DO_NOT_MATCH: "Passwords do not match.",
   SIGNUP_FAILED: "Signup failed. Please try again later.",
 };
 
-export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
+export default function Signup() {
   const [uid, setUID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,7 +70,6 @@ export default function Signup({ setIsRegistered }: { setIsRegistered: any }) {
       setPassword("");
       setConfirmPassword("");
       setLoading(false);
-      setIsRegistered(true);
     } catch (err) {
       setLoading(false);
       setError(ERROR_MESSAGES.SIGNUP_FAILED);
