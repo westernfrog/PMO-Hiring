@@ -5,6 +5,7 @@ import { useState } from "react";
 import { auth } from "../utils/firebase";
 import { signInWithEmailAndPassword, User } from "firebase/auth";
 import { redirect } from "next/navigation";
+import { AtSymbolIcon } from "@heroicons/react/24/outline";
 
 const ERROR_MESSAGES = {
   EMPTY_FIELDS: "Please fill in all the fields.",
@@ -13,7 +14,6 @@ const ERROR_MESSAGES = {
 };
 
 export default function Login() {
-  const [uid, setUID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function Login() {
   const handleChanges = (e: any) => {
     const { name, value } = e.target;
     if (name === "email") {
-      setUID(value);
+      setEmail(value);
     }
     if (name === "password") {
       setPassword(value);
@@ -31,26 +31,29 @@ export default function Login() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (uid === "" || password === "") {
+    if (email === "" || password === "") {
       setError(ERROR_MESSAGES.EMPTY_FIELDS);
+      console.log("");
       return;
     }
-    if (!uid.match(/^(2[0-9])[a-z]+[0-9]{4,5}$/)) {
+    if (!email.match(/^(2[0-9])[a-z]+[0-9]{4,5}$/)) {
       setError(ERROR_MESSAGES.INVALID_EMAIL_FORMAT);
       return;
     }
-    setEmail(uid + "@cuchd.in");
     setLoading(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password).then((e) => {
+        console.log("login succesfull", e);
+      });
       const user = auth.currentUser as User;
       if (user.emailVerified) {
-        redirect("/");
+        console.log("home");
       } else {
       }
     } catch (error) {
       setError(ERROR_MESSAGES.LOGIN_FAILED);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -58,8 +61,8 @@ export default function Login() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl h-screen flex items-center justify-center p-6">
-        <div className="lg:p-12 lg:bg-[#141516] lg:ring-1 ring-0 ring-zinc-900 shadow-inner rounded-3xl">
+      <div className="mx-auto max-w-lg h-screen flex items-center justify-center p-6">
+        <div className="lg:p-12 lg:bg-[#141516] lg:ring-1 ring-0 ring-zinc-900 shadow-inner rounded-3xl w-full">
           <div className="mb-8">
             <h1 className="text-2xl font-semibold">Welcome</h1>
             <p className="text-sm text-gray-500 leading-8">
@@ -78,14 +81,14 @@ export default function Login() {
                     name="email"
                     id="email"
                     autoComplete="false"
-                    className="lg:w-64 w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="Your UID"
-                    value={uid}
+                    className="w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    placeholder="example@cuchd.in"
+                    value={email}
                     required
                     onChange={handleChanges}
                   />
                   <span className="flex select-none items-center pl-3 sm:text-sm">
-                    @cuchd.in
+                    <AtSymbolIcon className="w-5 h-5" />
                   </span>
                 </div>
               </div>

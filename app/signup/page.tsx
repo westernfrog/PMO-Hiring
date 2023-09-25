@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
+import { AtSymbolIcon } from "@heroicons/react/24/outline";
 
 const ERROR_MESSAGES = {
   EMPTY_FIELDS: "Please fill in all the fields.",
@@ -18,7 +19,6 @@ const ERROR_MESSAGES = {
 };
 
 export default function Signup() {
-  const [uid, setUID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +30,8 @@ export default function Signup() {
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     if (name === "email") {
-      setUID(value);
+      setEmail(value);
+      console.log("email updated");
     }
     if (name === "password") {
       setPassword(value);
@@ -42,12 +43,12 @@ export default function Signup() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!terms || !uid || !password || !confirmPassword) {
+    if (!terms || !email || !password || !confirmPassword) {
       setError(ERROR_MESSAGES.EMPTY_FIELDS);
       return;
     }
 
-    if (!uid.match(/^(2[0-9])[a-z]+[0-9]{4,5}$/)) {
+    if (!email.match(/^(2[0-9])[a-z]+[0-9]{4,5}@cuchd.in$/)) {
       setError(ERROR_MESSAGES.INVALID_EMAIL_FORMAT);
       return;
     }
@@ -56,7 +57,7 @@ export default function Signup() {
       setError(ERROR_MESSAGES.PASSWORDS_DO_NOT_MATCH);
       return;
     }
-    setEmail(uid + "@cuchd.in");
+
     setLoading(true);
     setError(null);
 
@@ -64,7 +65,7 @@ export default function Signup() {
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser as User;
       await sendEmailVerification(user);
-      alert("Email verification sent");
+      alert("Email verification sent" + email);
 
       setEmail("");
       setPassword("");
@@ -79,8 +80,8 @@ export default function Signup() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl h-screen flex items-center justify-center p-6">
-        <div className="lg:p-12 lg:bg-[#141516] lg:ring-1 ring-0 ring-zinc-900 shadow-inner rounded-3xl">
+      <div className="mx-auto max-w-lg h-screen flex items-center justify-center p-6">
+        <div className="lg:p-12 lg:bg-[#141516] lg:ring-1 ring-0 ring-zinc-900 shadow-inner rounded-3xl w-full">
           <div className="mb-8">
             <h1 className="text-2xl font-semibold">
               Let&apos;s create an account
@@ -101,13 +102,13 @@ export default function Signup() {
                     name="email"
                     id="email"
                     autoComplete="off"
-                    className="lg:w-64 w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    className="w-full border-0 bg-transparent py-1.5 pl-1 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Your UID"
-                    value={uid}
+                    value={email}
                     onChange={handleChange}
                   />
                   <span className="flex select-none items-center pl-3 sm:text-sm">
-                    @cuchd.in
+                    <AtSymbolIcon className="w-5 h-5" />
                   </span>
                 </div>
               </div>
